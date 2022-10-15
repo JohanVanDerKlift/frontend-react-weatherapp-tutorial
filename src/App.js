@@ -11,20 +11,24 @@ const apiKey = '4b8466682d07ef8592271c0136a98757';
 function App() {
   const [weatherData, setWeatherData] = useState({});
   const [location, setLocation] = useState('');
+  const [error, toggleError] = useState(false);
 
   useEffect(() => {
-      async function fetchData() {
-          try {
-              const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${apiKey}&lang=nl`);
-              setWeatherData(result.data);
-          } catch (e) {
-              console.log(e);
-          }
-      }
+    async function fetchData() {
+      toggleError(false);
 
-      if (location) {
-          fetchData();
-      }
+        try {
+          const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${apiKey}&lang=nl`);
+          setWeatherData(result.data);
+        } catch (e) {
+          console.log(e);
+          toggleError(true);
+        }
+    }
+
+    if (location) {
+      fetchData();
+    }
 
   }, [location]);
 
@@ -37,6 +41,11 @@ function App() {
         {/*HEADER -------------------- */}
         <div className="weather-header">
           <SearchBar setLocationHandler={setLocation}/>
+          {error &&
+            <span className="wrong-location-error">
+              Oeps! Deze locatie bestaat niet
+            </span>
+          }
 
           <span className="location-details">
             {Object.keys(weatherData).length > 0 &&

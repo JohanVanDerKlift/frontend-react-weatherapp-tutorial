@@ -6,15 +6,18 @@ const apiKey = '4b8466682d07ef8592271c0136a98757';
 
 function ForecastTab({coordinates}) {
   const [ forecast, setForecast ] = useState([]);
+  const [error, toggleError] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
+      toggleError(false);
       try {
         const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}&lang=nl`);
         console.log(result.data);
         setForecast(result.data.daily.slice(1, 6));
       } catch (e) {
         console.error(e);
+        toggleError(true);
       }
     }
 
@@ -31,6 +34,18 @@ function ForecastTab({coordinates}) {
 
   return (
     <div className="tab-wrapper">
+      {error &&
+        <span>
+          Er is iets misgegaan bij het ophalen van de data
+        </span>
+      }
+
+      {forecast.length === 0 && !error &&
+        <span className="no-forecast">
+          Zoek eerst een locatie om het weer voor deze week te bekijken
+        </span>
+      }
+
       {forecast && forecast.map((day) => {
         return (
           <article className="forecast-day">
