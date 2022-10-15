@@ -5,12 +5,14 @@ import axios from "axios";
 const apiKey = '4b8466682d07ef8592271c0136a98757';
 
 function ForecastTab({coordinates}) {
-  const [ forecast, setForecast ] = useState([]);
+  const [forecast, setForecast] = useState([]);
   const [error, toggleError] = useState(false);
+  const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       toggleError(false);
+      toggleLoading(true);
       try {
         const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}&lang=nl`);
         console.log(result.data);
@@ -19,6 +21,7 @@ function ForecastTab({coordinates}) {
         console.error(e);
         toggleError(true);
       }
+      toggleLoading(false);
     }
 
     if (coordinates) {
@@ -44,6 +47,10 @@ function ForecastTab({coordinates}) {
         <span className="no-forecast">
           Zoek eerst een locatie om het weer voor deze week te bekijken
         </span>
+      }
+
+      {loading &&
+        <span>Loading...</span>
       }
 
       {forecast && forecast.map((day) => {
