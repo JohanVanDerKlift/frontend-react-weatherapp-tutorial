@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import './ForecastTab.css';
 import axios from "axios";
 
-const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
+const apiKey = '4b8466682d07ef8592271c0136a98757';
 
 function ForecastTab({coordinates}) {
   const [ forecast, setForecast ] = useState([]);
@@ -10,9 +10,9 @@ function ForecastTab({coordinates}) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const result = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&lang=nl`);
+        const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}&lang=nl`);
         console.log(result.data);
-        setForecast(result.data);
+        setForecast(result.data.daily.slice(1, 6));
       } catch (e) {
         console.error(e);
       }
@@ -24,82 +24,31 @@ function ForecastTab({coordinates}) {
 
   }, [coordinates]);
 
+  function createDateString(timestamp) {
+    const day = new Date(timestamp * 1000);
+    return day.toLocaleDateString('nl-NL', { weekday: 'long'});
+  }
+
   return (
     <div className="tab-wrapper">
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
+      {forecast && forecast.map((day) => {
+        return (
+          <article className="forecast-day">
+            <p className="day-description">
+              {createDateString(day.dt)}
+            </p>
 
-        <section className="forecast-weather">
+            <section className="forecast-weather">
             <span>
-              12&deg; C
+              {day.temp.day}
             </span>
-          <span className="weather-description">
-              Licht Bewolkt
+              <span className="weather-description">
+              {day.weather[0].description}
             </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
+            </section>
+          </article>
+        )
+        })}
     </div>
   );
 };
