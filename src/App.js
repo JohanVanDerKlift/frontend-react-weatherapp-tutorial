@@ -5,6 +5,12 @@ import MetricSlider from './components/metricSlider/MetricSlider';
 import './App.css';
 import axios from "axios";
 import ForecastTab from "./pages/forecastTab/ForecastTab";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import TodayTab from "./pages/todayTab/TodayTab";
 
 const apiKey = '4b8466682d07ef8592271c0136a98757';
 
@@ -61,11 +67,22 @@ function App() {
 
         {/*CONTENT ------------------ */}
         <div className="weather-content">
-          <TabBarMenu/>
+          <Router>
+            <TabBarMenu/>
 
-          <div className="tab-wrapper">
-            <ForecastTab coordinates={weatherData.coord}/>
-          </div>
+            <div className="tab-wrapper">
+
+              <Switch>
+                <Route path="/komende-week">
+                  <ForecastTab coordinates={weatherData.coord}/>
+                </Route>
+                <Route path="/" exact>
+                  <TodayTab/>
+                </Route>
+              </Switch>
+
+            </div>
+          </Router>
         </div>
 
         <MetricSlider/>
