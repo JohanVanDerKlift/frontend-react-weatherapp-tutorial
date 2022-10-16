@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import './ForecastTab.css';
 import axios from "axios";
+import kelvinToCelsius from "../../helpers/kelvinToCelsius";
+import createDateString from "../../helpers/createDateString";
 
 const apiKey = '4b8466682d07ef8592271c0136a98757';
 
@@ -14,8 +16,7 @@ function ForecastTab({coordinates}) {
       toggleError(false);
       toggleLoading(true);
       try {
-        const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}&lang=nl`);
-        console.log(result.data);
+        const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}`);
         setForecast(result.data.daily.slice(1, 6));
       } catch (e) {
         console.error(e);
@@ -29,11 +30,6 @@ function ForecastTab({coordinates}) {
     }
 
   }, [coordinates]);
-
-  function createDateString(timestamp) {
-    const day = new Date(timestamp * 1000);
-    return day.toLocaleDateString('nl-NL', { weekday: 'long'});
-  }
 
   return (
     <div className="tab-wrapper">
@@ -62,7 +58,7 @@ function ForecastTab({coordinates}) {
 
             <section className="forecast-weather">
             <span>
-              {day.temp.day}
+              {kelvinToCelsius(day.temp.day)}
             </span>
               <span className="weather-description">
               {day.weather[0].description}
