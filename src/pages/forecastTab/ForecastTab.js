@@ -4,8 +4,6 @@ import axios from "axios";
 import kelvinToCelsius from "../../helpers/kelvinToCelsius";
 import createDateString from "../../helpers/createDateString";
 
-const apiKey = '4b8466682d07ef8592271c0136a98757';
-
 function ForecastTab({coordinates}) {
   const [forecast, setForecast] = useState([]);
   const [error, toggleError] = useState(false);
@@ -16,7 +14,7 @@ function ForecastTab({coordinates}) {
       toggleError(false);
       toggleLoading(true);
       try {
-        const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}`);
+        const result = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${process.env.REACT_APP_API_KEY}`);
         setForecast(result.data.daily.slice(1, 6));
       } catch (e) {
         console.error(e);
